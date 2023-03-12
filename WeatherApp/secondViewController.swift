@@ -1,26 +1,27 @@
 //
-//  MainViewController.swift
+//  secondViewController.swift
 //  WeatherApp
 //
-//  Created by Ruslan Dalgatov on 09.03.2023.
+//  Created by Ruslan Dalgatov on 11.03.2023.
 //
 
 import UIKit
 import SnapKit
 
-class MainViewController: UIViewController {
+class secondViewController: UIViewController {
     
     // MARK: - Private properties
         
     private let cityLabel: UILabel = {
         let label = UILabel()
-        label.text = "Moscow"
+        label.text = "Makhachkala"
         label.font = .systemFont(ofSize: 45, weight: .bold)
         return label
     }()
     
     private let weatherImageView: UIImageView = {
         let view = UIImageView()
+        view.image = UIImage(named: "WeatherIcon2")
         view.image?.withTintColor(UIColor.black)
         return view
     }()
@@ -72,7 +73,7 @@ class MainViewController: UIViewController {
 
 // MARK: - Private methods
 
-private extension MainViewController{
+private extension secondViewController{
     func initialize(){
         
         let backgroundImage = UIImage(named: "background.jpg")
@@ -128,8 +129,8 @@ private extension MainViewController{
         
     }
     
-    private func getWeather(){
-        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.62&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
+    func getWeather(){
+        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=42.98&longitude=47.50&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
         let url = URL(string: urlString)!
         let request = URLRequest(url: url)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -149,7 +150,7 @@ private extension MainViewController{
 
                     
                     let icon = IconWithString(date: weather.currentWeather.weathercode)
-                    print("\(icon) MSK")
+                    print(icon)
                     let image = icon.getImageForWeatherCode(weather.currentWeather.weathercode)
                     self.weatherImageView.image = UIImage(named: image)
                     
@@ -161,3 +162,4 @@ private extension MainViewController{
         task.resume()
     }
 }
+
