@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C58CF7F29C087A600AC783B /* DecodingTheWeatherString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C58CF7E29C087A600AC783B /* DecodingTheWeatherString.swift */; };
 		0C5CD88F29BC7B74001383E3 /* IconWithString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CD88E29BC7B74001383E3 /* IconWithString.swift */; };
 		0C5CD89129BC7B88001383E3 /* DateConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CD89029BC7B88001383E3 /* DateConverter.swift */; };
 		0C5CD89329BC9FC9001383E3 /* secondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5CD89229BC9FC9001383E3 /* secondViewController.swift */; };
@@ -43,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0C58CF7E29C087A600AC783B /* DecodingTheWeatherString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodingTheWeatherString.swift; sourceTree = "<group>"; };
 		0C5CD88E29BC7B74001383E3 /* IconWithString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconWithString.swift; sourceTree = "<group>"; };
 		0C5CD89029BC7B88001383E3 /* DateConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateConverter.swift; sourceTree = "<group>"; };
 		0C5CD89229BC9FC9001383E3 /* secondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = secondViewController.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				0C909FDD29BA2B080084A1A1 /* WeatherData.swift */,
 				0C5CD88E29BC7B74001383E3 /* IconWithString.swift */,
 				0C5CD89029BC7B88001383E3 /* DateConverter.swift */,
+				0C58CF7E29C087A600AC783B /* DecodingTheWeatherString.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -449,6 +452,7 @@
 				0C909FDE29BA2B080084A1A1 /* WeatherData.swift in Sources */,
 				0C909FAE29BA1AF50084A1A1 /* SceneDelegate.swift in Sources */,
 				0C5CD89529BCA274001383E3 /* MyPageViewController.swift in Sources */,
+				0C58CF7F29C087A600AC783B /* DecodingTheWeatherString.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

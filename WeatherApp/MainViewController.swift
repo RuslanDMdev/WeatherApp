@@ -25,6 +25,13 @@ class MainViewController: UIViewController {
         return view
     }()
     
+    private let decodingTheWeatherLabel: UILabel = {
+        let label = UILabel()
+        label.text = "-"
+        label.font = .systemFont(ofSize: 18, weight: .regular)
+        return label
+    }()
+    
     private let weatherLabel: UILabel = {
         let label = UILabel()
         label.text = "-"
@@ -82,6 +89,7 @@ private extension MainViewController{
         view.sendSubviewToBack(backgroundImageView)
         view.addSubview(weatherImageView)
         view.addSubview(weatherLabel)
+        view.addSubview(decodingTheWeatherLabel)
         view.addSubview(windspeedLabel)
         view.addSubview(timezoneAbbreviationLabel)
         view.addSubview(cityLabel)
@@ -99,9 +107,14 @@ private extension MainViewController{
             make.width.equalTo(150)
         }
         
-            weatherLabel.snp.makeConstraints { make in
+        decodingTheWeatherLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(weatherImageView.snp.bottom).offset(20)
+            make.top.equalTo(weatherImageView.snp.bottom).offset(5)
+        }
+        
+        weatherLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(decodingTheWeatherLabel.snp.bottom).offset(10)
         }
         
         let temperatureStack = UIStackView()
@@ -141,17 +154,20 @@ private extension MainViewController{
                     
                     self.maxTemperatureLabel.text = "\(weather.daily.temperature2MMax)"
                     let tempHigh = String(self.maxTemperatureLabel.text!.dropFirst().dropLast())
-                    self.maxTemperatureLabel.text = "H:\(tempHigh)"
+                    self.maxTemperatureLabel.text = "Макс:\(tempHigh)"
                     
                     self.minTemperatureLabel.text = "\(weather.daily.temperature2MMin)"
                     let tempLow = String(self.minTemperatureLabel.text!.dropFirst().dropLast())
-                    self.minTemperatureLabel.text = "L:\(tempLow)"
+                    self.minTemperatureLabel.text = "Мин:\(tempLow)"
 
                     
                     let icon = IconWithString(date: weather.currentWeather.weathercode)
-                    print("\(icon) MSK")
                     let image = icon.getImageForWeatherCode(weather.currentWeather.weathercode)
                     self.weatherImageView.image = UIImage(named: image)
+                    
+                    let decodWeatherCode = DecodingTheWeatherString(date: weather.currentWeather.weathercode)
+                    let textDecode = decodWeatherCode.getTextFromWeatherCode(weather.currentWeather.weathercode)
+                    self.decodingTheWeatherLabel.text = textDecode
                     
                 }
             } else {

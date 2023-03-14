@@ -33,6 +33,13 @@ class secondViewController: UIViewController {
         return label
     }()
     
+    private let decodingTheWeatherLabel: UILabel = {
+        let label = UILabel()
+        label.text = "-"
+        label.font = .systemFont(ofSize: 18, weight: .regular)
+        return label
+    }()
+    
     private let minTemperatureLabel: UILabel = {
         let label = UILabel()
         label.text = "-"
@@ -82,6 +89,7 @@ private extension secondViewController{
         view.addSubview(backgroundImageView)
         view.sendSubviewToBack(backgroundImageView)
         view.addSubview(weatherImageView)
+        view.addSubview(decodingTheWeatherLabel)
         view.addSubview(weatherLabel)
         view.addSubview(windspeedLabel)
         view.addSubview(timezoneAbbreviationLabel)
@@ -100,9 +108,14 @@ private extension secondViewController{
             make.width.equalTo(150)
         }
         
-            weatherLabel.snp.makeConstraints { make in
+        decodingTheWeatherLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(weatherImageView.snp.bottom).offset(20)
+            make.top.equalTo(weatherImageView.snp.bottom).offset(5)
+        }
+        
+        weatherLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(decodingTheWeatherLabel.snp.bottom).offset(10)
         }
         
         let temperatureStack = UIStackView()
@@ -150,9 +163,12 @@ private extension secondViewController{
 
                     
                     let icon = IconWithString(date: weather.currentWeather.weathercode)
-                    print(icon)
                     let image = icon.getImageForWeatherCode(weather.currentWeather.weathercode)
                     self.weatherImageView.image = UIImage(named: image)
+                    
+                    let decodWeatherCode = DecodingTheWeatherString(date: weather.currentWeather.weathercode)
+                    let textDecode = decodWeatherCode.getTextFromWeatherCode(weather.currentWeather.weathercode)
+                    self.decodingTheWeatherLabel.text = textDecode
                     
                 }
             } else {
