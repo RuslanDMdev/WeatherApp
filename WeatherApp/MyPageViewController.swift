@@ -19,7 +19,8 @@ class MyPageViewController: UIPageViewController {
         
         let page1 = MainViewController()
         let page2 = secondViewController()
-        pages = [page1, page2]
+        let page3 = ThirdViewController()
+        pages = [page1, page2, page3]
         setViewControllers([page1], direction: .forward, animated: true, completion: nil)
         
         configurePageControl()

@@ -1,41 +1,46 @@
 //
-//  MainViewController.swift
+//  ThirdViewController.swift
 //  WeatherApp
 //
-//  Created by Ruslan Dalgatov on 09.03.2023.
+//  Created by Ruslan Dalgatov on 14.03.2023.
 //
+
 
 import UIKit
 import SnapKit
 
-class MainViewController: UIViewController {
+class ThirdViewController: UIViewController {
     
     // MARK: - Private properties
         
     private let cityLabel: UILabel = {
         let label = UILabel()
-        label.text = "Moscow"
+        label.text = "Dubai"
         label.font = .systemFont(ofSize: 45, weight: .bold)
         return label
     }()
     
+    private var backgroundImageView = UIImageView()
+
+    
     private let weatherImageView: UIImageView = {
         let view = UIImageView()
+        view.image = UIImage(named: "WeatherIcon2")
         view.image?.withTintColor(UIColor.black)
         return view
-    }()
-    
-    private let decodingTheWeatherLabel: UILabel = {
-        let label = UILabel()
-        label.text = "-"
-        label.font = .systemFont(ofSize: 18, weight: .regular)
-        return label
     }()
     
     private let weatherLabel: UILabel = {
         let label = UILabel()
         label.text = "-"
         label.font = .systemFont(ofSize: 30, weight: .semibold)
+        return label
+    }()
+    
+    private let decodingTheWeatherLabel: UILabel = {
+        let label = UILabel()
+        label.text = "-"
+        label.font = .systemFont(ofSize: 18, weight: .regular)
         return label
     }()
     
@@ -67,8 +72,7 @@ class MainViewController: UIViewController {
         return label
     }()
     
-    var backgroundImageView = UIImageView()
-
+    
     
     //MARK: - View lifecycle
     override func viewDidLoad() {
@@ -80,12 +84,12 @@ class MainViewController: UIViewController {
 
 // MARK: - Private methods
 
-private extension MainViewController{
+private extension ThirdViewController{
     func initialize(){
-        
+
         view.addSubview(weatherImageView)
-        view.addSubview(weatherLabel)
         view.addSubview(decodingTheWeatherLabel)
+        view.addSubview(weatherLabel)
         view.addSubview(windspeedLabel)
         view.addSubview(timezoneAbbreviationLabel)
         view.addSubview(cityLabel)
@@ -137,8 +141,8 @@ private extension MainViewController{
         
     }
     
-    private func getWeather(){
-        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.62&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
+    func getWeather(){
+        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=25.08&longitude=55.31&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
         let url = URL(string: urlString)!
         let request = URLRequest(url: url)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -150,11 +154,11 @@ private extension MainViewController{
                     
                     self.maxTemperatureLabel.text = "\(weather.daily.temperature2MMax)"
                     let tempHigh = String(self.maxTemperatureLabel.text!.dropFirst().dropLast())
-                    self.maxTemperatureLabel.text = "Макс:\(tempHigh)"
+                    self.maxTemperatureLabel.text = "H:\(tempHigh)"
                     
                     self.minTemperatureLabel.text = "\(weather.daily.temperature2MMin)"
                     let tempLow = String(self.minTemperatureLabel.text!.dropFirst().dropLast())
-                    self.minTemperatureLabel.text = "Мин:\(tempLow)"
+                    self.minTemperatureLabel.text = "L:\(tempLow)"
 
                     
                     let icon = IconWithString(date: weather.currentWeather.weathercode)
@@ -182,3 +186,4 @@ private extension MainViewController{
         task.resume()
     }
 }
+

@@ -19,6 +19,9 @@ class secondViewController: UIViewController {
         return label
     }()
     
+    private var backgroundImageView = UIImageView()
+
+    
     private let weatherImageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "WeatherIcon2")
@@ -82,12 +85,7 @@ class secondViewController: UIViewController {
 
 private extension secondViewController{
     func initialize(){
-        
-        let backgroundImage = UIImage(named: "background.jpg")
-        let backgroundImageView = UIImageView(image: backgroundImage)
-        backgroundImageView.contentMode = .scaleAspectFill
-        view.addSubview(backgroundImageView)
-        view.sendSubviewToBack(backgroundImageView)
+
         view.addSubview(weatherImageView)
         view.addSubview(decodingTheWeatherLabel)
         view.addSubview(weatherLabel)
@@ -170,6 +168,15 @@ private extension secondViewController{
                     let textDecode = decodWeatherCode.getTextFromWeatherCode(weather.currentWeather.weathercode)
                     self.decodingTheWeatherLabel.text = textDecode
                     
+                    let imageWeatherCode = DataBackgraundImage(date: weather.currentWeather.weathercode)
+                    let imageBackgraundString = imageWeatherCode.getBGImageFromWeatherCode(weather.currentWeather.weathercode)
+                    let imageBackgraund = UIImage(named: imageBackgraundString)
+                    self.backgroundImageView = UIImageView(image: imageBackgraund)
+                    self.view.addSubview(self.backgroundImageView)
+                    self.view.sendSubviewToBack(self.backgroundImageView)
+                    self.backgroundImageView.snp.makeConstraints { make in
+                        make.width.height.equalToSuperview()
+                    }
                 }
             } else {
                 print("Fail!")
