@@ -17,10 +17,11 @@ class MyPageViewController: UIPageViewController {
         dataSource = self
         delegate = self
         
-        let page1 = MainViewController()
-        let page2 = secondViewController()
-        let page3 = ThirdViewController()
-        pages = [page1, page2, page3]
+        let page1 = LocationViewController()
+        let page2 = MainViewController()
+        let page3 = secondViewController()
+        let page4 = ThirdViewController()
+        pages = [page1, page2, page3, page4]
         setViewControllers([page1], direction: .forward, animated: true, completion: nil)
         
         configurePageControl()
