@@ -48,7 +48,7 @@ struct IconWithString {
             return "13.thunderstorm-light"
             
         default:
-            return "nosign"
+            return "background1"
         }
     }
 }

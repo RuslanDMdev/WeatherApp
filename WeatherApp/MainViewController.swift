@@ -67,6 +67,27 @@ class MainViewController: UIViewController {
         return label
     }()
     
+    private let winddirectionBox: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    private let winddirectionBox2: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    private let winddirectionBox3: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    private let winddirectionBox4: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    
     var backgroundImageView = UIImageView()
 
     
@@ -83,14 +104,24 @@ class MainViewController: UIViewController {
 private extension MainViewController{
     func initialize(){
         
+        self.backgroundImageView.image = UIImage(named: "hard-cloudy")
+        self.view.addSubview(self.backgroundImageView)
+        self.view.sendSubviewToBack(self.backgroundImageView)
+        self.backgroundImageView.snp.makeConstraints { make in
+            make.width.height.equalToSuperview()
+        }
+        
         view.addSubview(weatherImageView)
         view.addSubview(weatherLabel)
         view.addSubview(decodingTheWeatherLabel)
         view.addSubview(windspeedLabel)
         view.addSubview(timezoneAbbreviationLabel)
         view.addSubview(cityLabel)
-    
-        
+        view.addSubview(winddirectionBox)
+        view.addSubview(winddirectionBox2)
+        view.addSubview(winddirectionBox3)
+        view.addSubview(winddirectionBox4)
+
         cityLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(100)
             make.centerX.equalToSuperview()
@@ -133,6 +164,26 @@ private extension MainViewController{
         timezoneAbbreviationLabel.snp.makeConstraints { make in
         make.centerX.equalToSuperview()
         make.top.equalTo(windspeedLabel.snp.bottom).offset(20)
+        }
+        
+        winddirectionBox.snp.makeConstraints { make in
+            make.top.equalTo(timezoneAbbreviationLabel).inset(20)
+            make.left.equalTo(20)
+        }
+        
+        winddirectionBox2.snp.makeConstraints { make in
+            make.top.equalTo(timezoneAbbreviationLabel).inset(20)
+            make.right.equalTo(20)
+        }
+        
+        winddirectionBox3.snp.makeConstraints { make in
+            make.top.equalTo(winddirectionBox).inset(20)
+            make.left.equalTo(20)
+        }
+        
+        winddirectionBox4.snp.makeConstraints { make in
+            make.top.equalTo(winddirectionBox2).inset(20)
+            make.right.equalTo(20)
         }
         
     }

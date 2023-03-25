@@ -1,0 +1,93 @@
+//
+//  BoxView.swift
+//  WeatherApp
+//
+//  Created by Ruslan Dalgatov on 24.03.2023.
+//
+
+import Foundation
+import UIKit
+import SnapKit
+
+class BoxView: UIView {
+    //MARK: - init
+    
+    init(){
+        super.init(frame: .zero)
+        inialize()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Private constants
+    
+    private enum UIConstants {
+        static let boxSize: CGFloat = 150
+        
+    }
+
+    
+}
+// MARK: - Private properties
+    private let squareOfBox: UIView = {
+        let view  = UIView()
+        return view
+    }()
+
+    private let boxNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "УФ-индекс"
+        label.font = UIFont.systemFont(ofSize: 14)
+        return label
+    }()
+
+    private let numLabel: UILabel = {
+        let label = UILabel()
+        label.text = "27"
+        label.font = UIFont.boldSystemFont(ofSize: 45)
+        return label
+    }()
+    
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "этот показательпоказатель показатель показатель v показатель"
+        label.font = UIFont.systemFont(ofSize: 8)
+        label.numberOfLines = 4
+        return label
+    }()
+    
+// MARK: - Private methods
+
+private extension BoxView{
+    func inialize(){
+        addSubview(squareOfBox)
+        squareOfBox.addSubview(boxNameLabel)
+        squareOfBox.addSubview(numLabel)
+        squareOfBox.addSubview(descriptionLabel)
+        
+        squareOfBox.layer.cornerRadius = 20
+        squareOfBox.backgroundColor = #colorLiteral(red: 0.6666666667, green: 0.6666666667, blue: 0.6666666667, alpha: 0.4911869883)
+        squareOfBox.snp.makeConstraints { make in
+            make.width.height.equalTo(UIConstants.boxSize)
+        }
+        
+        boxNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(5)
+            make.left.equalTo(10)
+        }
+        
+        numLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.width.equalTo(UIConstants.boxSize - 10)
+            make.left.equalTo(5)
+            make.bottom.equalTo(squareOfBox.snp.bottom).inset(10)
+        }
+        
+    }
+}
