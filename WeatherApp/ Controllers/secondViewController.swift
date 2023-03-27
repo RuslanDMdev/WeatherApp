@@ -138,6 +138,17 @@ private extension secondViewController{
         make.top.equalTo(windspeedLabel.snp.bottom).offset(20)
         }
         
+        class Tea {
+            var price = 200
+        }
+
+        var tea = Tea()
+        tea.price = 250
+
+        var anotherTea = tea
+        anotherTea.price = 300
+
+        print(tea.price, anotherTea.price)
     }
     
     func getWeather(){
