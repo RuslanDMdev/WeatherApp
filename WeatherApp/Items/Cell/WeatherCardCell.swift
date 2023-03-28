@@ -1,104 +1,112 @@
 //
-//  LocationViewController.swift
+//  WeatherCardCell.swift
 //  WeatherApp
 //
-//  Created by Ruslan Dalgatov on 15.03.2023.
+//  Created by Ruslan Dalgatov on 28.03.2023.
 //
 
 import UIKit
 import SnapKit
-import CoreLocation
 
-class LocationViewController: UIViewController, CLLocationManagerDelegate{
-    
-    // MARK: - Private properties
+class WeatherCardCell: UITableViewCell {
         
-    let locationManager = CLLocationManager()
-    private var backgroundImageView = UIImageView()
+
+    // MARK: - Private properties
     
     private let cityLabel: UILabel = {
         let label = UILabel()
-        label.text = "Текущее местоположение"
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.text = "N/a"
+        label.font = .systemFont(ofSize: 45, weight: .bold)
         return label
     }()
     
     private let weatherImageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "WeatherIcon2")
         view.image?.withTintColor(UIColor.black)
         return view
     }()
     
-    private let weatherLabel: UILabel = {
+    private let decodingTheWeatherLabel: UILabel = {
         let label = UILabel()
-        label.text = "-"
-        label.font = .systemFont(ofSize: 30, weight: .semibold)
+        label.text = "N/a"
+        label.font = .systemFont(ofSize: 18, weight: .regular)
         return label
     }()
     
-    private let decodingTheWeatherLabel: UILabel = {
+    private let weatherLabel: UILabel = {
         let label = UILabel()
-        label.text = "-"
-        label.font = .systemFont(ofSize: 18, weight: .regular)
+        label.text = "N/a"
+        label.font = .systemFont(ofSize: 30, weight: .semibold)
         return label
     }()
     
     private let minTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "-"
+        label.text = "N/a"
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         return label
     }()
     
     private let maxTemperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "-"
+        label.text = "N/a"
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         return label
     }()
     
-    private let windspeedLabel: UILabel = {
-        let label = UILabel()
-        label.text = "-"
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
-        return label
-    }()
     
-    private let timezoneAbbreviationLabel: UILabel = {
-        let label = UILabel()
-        label.text = "-"
-        label.font = .systemFont(ofSize: 15, weight: .medium)
-        return label
-    }()
-    
-    
-    
-    //MARK: - View lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        initialize()
-        getWeather()
-        
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
+    var backgroundImageView = UIImageView()
+
+    // MARK: - Public
+    func configure(with info: WeatherItemInfo){
+        weatherImageView.image = info.weatherImage 
+        backgroundImageView.image = info.backgraundImage
+        weatherLabel.text = info.currentWeather
+        cityLabel.text = info.cityName
+        decodingTheWeatherLabel.text = info.weatherTitle
+        minTemperatureLabel.text = info.minTemp
+        maxTemperatureLabel.text = info.maxTemp
     }
-}
-
-// MARK: - Private methods
-
-private extension LocationViewController{
-    func initialize(){
-
-        view.addSubview(weatherImageView)
-        view.addSubview(decodingTheWeatherLabel)
-        view.addSubview(weatherLabel)
-        view.addSubview(windspeedLabel)
-        view.addSubview(timezoneAbbreviationLabel)
-        view.addSubview(cityLabel)
     
-        
+    
+    // MARK: - Init
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initialize()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Private constants
+    
+    private enum UIConstants{
+        static let userImageSize: CGFloat = 150
+        static let contentInset: CGFloat = 12
+        static let userImageTopInset: CGFloat = 6
+        static let userNameStackToPrifilieImageOffset: CGFloat = 12
+        static let postImageToUserImageOffset: CGFloat = 6
+
+        //MARK: - Fonts
+        static let userPostNameFontSize: CGFloat = 14
+        static let subtitleFontSize: CGFloat = 11
+
+    }
+
+    
+
+    
+}
+// MARK: - Private methods
+private extension WeatherCardCell{
+    func initialize(){
+        selectionStyle = .none
+        contentView.addSubview(weatherImageView)
+        contentView.addSubview(weatherLabel)
+        contentView.addSubview(decodingTheWeatherLabel)
+        contentView.addSubview(cityLabel)
+
         cityLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(100)
             make.centerX.equalToSuperview()
@@ -124,51 +132,30 @@ private extension LocationViewController{
         let temperatureStack = UIStackView()
         temperatureStack.addArrangedSubview(minTemperatureLabel)
         temperatureStack.addArrangedSubview(maxTemperatureLabel)
-        view.addSubview(temperatureStack)
+        contentView.addSubview(temperatureStack)
         temperatureStack.spacing = 5
         temperatureStack.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(weatherLabel.snp.bottom).offset(10)
         }
-
         
-        
-        windspeedLabel.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.top.equalTo(temperatureStack.snp.bottom).offset(10)
-        }
-        
-        timezoneAbbreviationLabel.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.top.equalTo(windspeedLabel.snp.bottom).offset(20)
-        }
-        
-    }
-    
-    func getWeather(){
-        
-        if let location = locationManager.location {
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            let urlString2 = "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
-            
-        let url = URL(string: urlString2)!
-        let request = URLRequest(url: url)
+        func getWeather(){
+            let urlString = "https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.62&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
+            let url = URL(string: urlString)!
+            let request = URLRequest(url: url)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 if let data, let weather = try? JSONDecoder().decode(WeatherData.self, from: data) {
                     DispatchQueue.main.async {
                         self.weatherLabel.text = "\(weather.currentWeather.temperature)°"
-                        self.windspeedLabel.text = "Скорость ветра = \(weather.currentWeather.windspeed) м/с"
-                        self.timezoneAbbreviationLabel.text = "\(weather.timezoneAbbreviation)"
                         
                         self.maxTemperatureLabel.text = "\(weather.daily.temperature2MMax)"
                         let tempHigh = String(self.maxTemperatureLabel.text!.dropFirst().dropLast())
-                        self.maxTemperatureLabel.text = "H:\(tempHigh)"
+                        self.maxTemperatureLabel.text = "Макс:\(tempHigh)"
                         
                         self.minTemperatureLabel.text = "\(weather.daily.temperature2MMin)"
                         let tempLow = String(self.minTemperatureLabel.text!.dropFirst().dropLast())
-                        self.minTemperatureLabel.text = "L:\(tempLow)"
-                        
+                        self.minTemperatureLabel.text = "Мин:\(tempLow)"
+
                         
                         let icon = IconWithString(date: weather.currentWeather.weathercode)
                         let image = icon.getImageForWeatherCode(weather.currentWeather.weathercode)
@@ -182,8 +169,8 @@ private extension LocationViewController{
                         let imageBackgraundString = imageWeatherCode.getBGImageFromWeatherCode(weather.currentWeather.weathercode)
                         let imageBackgraund = UIImage(named: imageBackgraundString)
                         self.backgroundImageView = UIImageView(image: imageBackgraund)
-                        self.view.addSubview(self.backgroundImageView)
-                        self.view.sendSubviewToBack(self.backgroundImageView)
+                        self.contentView.addSubview(self.backgroundImageView)
+                        self.contentView.sendSubviewToBack(self.backgroundImageView)
                         self.backgroundImageView.snp.makeConstraints { make in
                             make.width.height.equalToSuperview()
                         }
@@ -194,5 +181,6 @@ private extension LocationViewController{
             }
             task.resume()
         }
+        
     }
 }
