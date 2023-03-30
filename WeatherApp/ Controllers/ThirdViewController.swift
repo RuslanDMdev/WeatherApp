@@ -71,6 +71,11 @@ class ThirdViewController: UIViewController {
         return label
     }()
     
+    private let searchTextField: UITextField = {
+       let textField = UITextField()
+        return textField
+    }()
+    
     
     
     //MARK: - View lifecycle
@@ -85,7 +90,7 @@ class ThirdViewController: UIViewController {
 
 private extension ThirdViewController{
     func initialize(){
-
+        view.addSubview(searchTextField)
         view.addSubview(weatherImageView)
         view.addSubview(decodingTheWeatherLabel)
         view.addSubview(weatherLabel)
@@ -93,9 +98,18 @@ private extension ThirdViewController{
         view.addSubview(timezoneAbbreviationLabel)
         view.addSubview(cityLabel)
     
+        searchTextField.layer.borderWidth = 1
+        searchTextField.text = "London"
+        searchTextField.placeholder = "Поиск"
+        searchTextField.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(100)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(100)
+            make.height.equalTo(30)
+        }
         
         cityLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(100)
+            make.top.equalToSuperview().inset(150)
             make.centerX.equalToSuperview()
         }
         
@@ -142,7 +156,27 @@ private extension ThirdViewController{
     
     func getWeather(){
         
-        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=25.08&longitude=55.31&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
+        let cityName = searchTextField.text
+        var latitudeCity = ""
+        var longitudeCity = ""
+        let urlStringCity = "http://api.openweathermap.org/geo/1.0/direct?q="+ \(cityName) + "&limit=5&appid=292842ad3a54adb663034679ab2a5816"
+        print(urlStringCity)
+        let urlCity = URL(string: urlStringCity)!
+        let requestCity = URLRequest(url: urlCity)
+        let taskCity = URLSession.shared.dataTask(with: requestCity) { dataCity, response, error in
+            if let dataCity, let city = try? JSONDecoder().decode(CityDataStructElement.self, from: dataCity) {
+                DispatchQueue.main.async {
+                    latitudeCity = "\(city.lat)"
+                    longitudeCity = "\(city.lon)"
+                    
+                }
+            } else {
+                print("Fail!")
+            }
+        }
+        
+        
+        let urlString = "https://api.open-meteo.com/v1/forecast?latitude="+"\(latitudeCity)"+"&longitude="+"\(longitudeCity)"+"&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
         let url = URL(string: urlString)!
         let request = URLRequest(url: url)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -184,6 +218,7 @@ private extension ThirdViewController{
             }
         }
         task.resume()
+        taskCity.resume()
     }
 }
 
