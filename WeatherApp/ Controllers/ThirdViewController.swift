@@ -17,7 +17,7 @@ class ThirdViewController: UIViewController {
     
     private let cityLabel: UILabel = {
         let label = UILabel()
-        label.text = "Dubai"
+        label.text = "-"
         label.font = .systemFont(ofSize: 45, weight: .bold)
         return label
     }()
@@ -73,17 +73,129 @@ class ThirdViewController: UIViewController {
     
     private let searchTextField: UITextField = {
        let textField = UITextField()
+        textField.text = "Madrid"
         return textField
     }()
     
+    private let getWeatherButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        button.setTitle("Обновить погоду", for: .normal)
+        button.layer.cornerRadius = 20
+        return button
+    }()
+    
+    var latitudeCity = "45"
+    var longitudeCity = "34"
     
     
     //MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
-        getWeather()
+        getCityName()
+
     }
+    
+    var secondApiUrl: String = ""
+
+    @objc func buttonTapped(){
+        backgroundImageView.image = UIImage(named: "")
+        getCityName()
+        searchTextField.text = ""
+
+    }
+ 
+    func getCityName(){
+        
+        let cityName = searchTextField.text!
+        let geoApiUrl = "https://api.openweathermap.org/geo/1.0/direct?q=\(cityName)&limit=5&appid=292842ad3a54adb663034679ab2a5816"
+        cityLabel.text = cityName
+        // First, get the latitude and longitude from the geo API
+        if let url = URL(string: geoApiUrl) {
+            let session = URLSession.shared
+            let task = session.dataTask(with: url) { data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                    return
+                }
+                guard let data = data else {
+                    print("Error: No data received")
+                    return
+                }
+                do {
+                    if let jsonArray = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] {
+                        if let firstResult = jsonArray.first,
+                           let latitude = firstResult["lat"] as? Double,
+                           let longitude = firstResult["lon"] as? Double {
+                            self.secondApiUrl = "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
+                            
+                            // Now you can use the latitude and longitude in the second API
+                            // TODO: Perform API call to second API
+                            print("Latitude: \(latitude), Longitude: \(longitude)")
+                            print("Second API URL: \(self.secondApiUrl)")
+                            self.getWeather()
+                            
+                        }
+                    }
+                } catch {
+                    print("Error: \(error.localizedDescription)")
+                }
+            }
+            task.resume()
+        }
+
+    }
+    
+    func getWeather(){
+        
+        print(secondApiUrl)
+        let url = URL(string: secondApiUrl)!
+        let request = URLRequest(url: url)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data, let weather = try? JSONDecoder().decode(WeatherData.self, from: data) {
+                DispatchQueue.main.async {
+                    self.weatherLabel.text = "\(weather.currentWeather.temperature)°"
+                    self.windspeedLabel.text = "Скорость ветра = \(weather.currentWeather.windspeed) м/с"
+                    self.timezoneAbbreviationLabel.text = "\(weather.timezoneAbbreviation)"
+                    
+                    self.maxTemperatureLabel.text = "\(weather.daily.temperature2MMax)"
+                    let tempHigh = String(self.maxTemperatureLabel.text!.dropFirst().dropLast())
+                    self.maxTemperatureLabel.text = "H:\(tempHigh)"
+                    
+                    self.minTemperatureLabel.text = "\(weather.daily.temperature2MMin)"
+                    let tempLow = String(self.minTemperatureLabel.text!.dropFirst().dropLast())
+                    self.minTemperatureLabel.text = "L:\(tempLow)"
+
+                    
+                    let icon = IconWithString(date: weather.currentWeather.weathercode)
+                    let image = icon.getImageForWeatherCode(weather.currentWeather.weathercode)
+                    self.weatherImageView.image = UIImage(named: image)
+                    
+                    let decodWeatherCode = DecodingTheWeatherString(date: weather.currentWeather.weathercode)
+                    let textDecode = decodWeatherCode.getTextFromWeatherCode(weather.currentWeather.weathercode)
+                    self.decodingTheWeatherLabel.text = textDecode
+                    
+                    let imageWeatherCode = DataBackgraundImage(date: weather.currentWeather.weathercode)
+                    let imageBackgraundString = imageWeatherCode.getBGImageFromWeatherCode(weather.currentWeather.weathercode)
+                    print(imageBackgraundString)
+                    let imageBackgraund = UIImage(named: imageBackgraundString)
+                    self.backgroundImageView = UIImageView(image: imageBackgraund)
+                    print(self.backgroundImageView)
+                    self.view.addSubview(self.backgroundImageView)
+                    self.view.sendSubviewToBack(self.backgroundImageView)
+                    self.backgroundImageView.snp.makeConstraints { make in
+                        make.width.height.equalToSuperview()
+                    }
+                }
+            } else {
+                print("Fail!")
+            }
+        }
+        task.resume()
+    }
+    
+    
 }
 
 // MARK: - Private methods
@@ -97,9 +209,11 @@ private extension ThirdViewController{
         view.addSubview(windspeedLabel)
         view.addSubview(timezoneAbbreviationLabel)
         view.addSubview(cityLabel)
-    
+        view.addSubview(getWeatherButton)
+        view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        
+
         searchTextField.layer.borderWidth = 1
-        searchTextField.text = "London"
         searchTextField.placeholder = "Поиск"
         searchTextField.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(100)
@@ -152,73 +266,15 @@ private extension ThirdViewController{
         make.top.equalTo(windspeedLabel.snp.bottom).offset(20)
         }
         
-    }
-    
-    func getWeather(){
         
-        let cityName = searchTextField.text
-        var latitudeCity = ""
-        var longitudeCity = ""
-        let urlStringCity = "http://api.openweathermap.org/geo/1.0/direct?q="+ \(cityName) + "&limit=5&appid=292842ad3a54adb663034679ab2a5816"
-        print(urlStringCity)
-        let urlCity = URL(string: urlStringCity)!
-        let requestCity = URLRequest(url: urlCity)
-        let taskCity = URLSession.shared.dataTask(with: requestCity) { dataCity, response, error in
-            if let dataCity, let city = try? JSONDecoder().decode(CityDataStructElement.self, from: dataCity) {
-                DispatchQueue.main.async {
-                    latitudeCity = "\(city.lat)"
-                    longitudeCity = "\(city.lon)"
-                    
-                }
-            } else {
-                print("Fail!")
-            }
+        getWeatherButton.backgroundColor = #colorLiteral(red: 0.1607843137, green: 0.1647058824, blue: 0.1882352941, alpha: 0.404318399)
+        getWeatherButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(timezoneAbbreviationLabel.snp.bottom).offset(120)
+            make.width.equalTo(150)
+            make.height.equalTo(50)
         }
         
-        
-        let urlString = "https://api.open-meteo.com/v1/forecast?latitude="+"\(latitudeCity)"+"&longitude="+"\(longitudeCity)"+"&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
-        let url = URL(string: urlString)!
-        let request = URLRequest(url: url)
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data, let weather = try? JSONDecoder().decode(WeatherData.self, from: data) {
-                DispatchQueue.main.async {
-                    self.weatherLabel.text = "\(weather.currentWeather.temperature)°"
-                    self.windspeedLabel.text = "Скорость ветра = \(weather.currentWeather.windspeed) м/с"
-                    self.timezoneAbbreviationLabel.text = "\(weather.timezoneAbbreviation)"
-                    
-                    self.maxTemperatureLabel.text = "\(weather.daily.temperature2MMax)"
-                    let tempHigh = String(self.maxTemperatureLabel.text!.dropFirst().dropLast())
-                    self.maxTemperatureLabel.text = "H:\(tempHigh)"
-                    
-                    self.minTemperatureLabel.text = "\(weather.daily.temperature2MMin)"
-                    let tempLow = String(self.minTemperatureLabel.text!.dropFirst().dropLast())
-                    self.minTemperatureLabel.text = "L:\(tempLow)"
-
-                    
-                    let icon = IconWithString(date: weather.currentWeather.weathercode)
-                    let image = icon.getImageForWeatherCode(weather.currentWeather.weathercode)
-                    self.weatherImageView.image = UIImage(named: image)
-                    
-                    let decodWeatherCode = DecodingTheWeatherString(date: weather.currentWeather.weathercode)
-                    let textDecode = decodWeatherCode.getTextFromWeatherCode(weather.currentWeather.weathercode)
-                    self.decodingTheWeatherLabel.text = textDecode
-                    
-                    let imageWeatherCode = DataBackgraundImage(date: weather.currentWeather.weathercode)
-                    let imageBackgraundString = imageWeatherCode.getBGImageFromWeatherCode(weather.currentWeather.weathercode)
-                    let imageBackgraund = UIImage(named: imageBackgraundString)
-                    self.backgroundImageView = UIImageView(image: imageBackgraund)
-                    self.view.addSubview(self.backgroundImageView)
-                    self.view.sendSubviewToBack(self.backgroundImageView)
-                    self.backgroundImageView.snp.makeConstraints { make in
-                        make.width.height.equalToSuperview()
-                    }
-                }
-            } else {
-                print("Fail!")
-            }
-        }
-        task.resume()
-        taskCity.resume()
     }
 }
 
