@@ -117,7 +117,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0C5CD88D29BC7B64001383E3 /* Helpers */ = {
+		0C5CD88D29BC7B64001383E3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				0C909FDD29BA2B080084A1A1 /* WeatherData.swift */,
@@ -127,7 +127,7 @@
 				0C58CF8029C0AFDE00AC783B /* DataBackgraundImage.swift */,
 				0CFA526229D47E66003CF6E8 /* CityDataStructElement.swift */,
 			);
-			path = Helpers;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		0C909F9F29BA1AF50084A1A1 = {
@@ -157,9 +157,8 @@
 			isa = PBXGroup;
 			children = (
 				0C909FDC29BA1C1A0084A1A1 /* Application */,
-				0CFA525329D0B38C003CF6E8 /*  Controllers */,
-				0CFA525A29D377B7003CF6E8 /* Items */,
-				0C5CD88D29BC7B64001383E3 /* Helpers */,
+				0C5CD88D29BC7B64001383E3 /* Model */,
+				0CFA526429D73A0F003CF6E8 /* View */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -200,15 +199,15 @@
 			path = Application;
 			sourceTree = "<group>";
 		};
-		0CFA525229CF8540003CF6E8 /* View */ = {
+		0CFA525229CF8540003CF6E8 /* CommonView */ = {
 			isa = PBXGroup;
 			children = (
 				0C1FDB9029CDB6E300E44560 /* BoxView.swift */,
 			);
-			path = View;
+			path = CommonView;
 			sourceTree = "<group>";
 		};
-		0CFA525329D0B38C003CF6E8 /*  Controllers */ = {
+		0CFA525329D0B38C003CF6E8 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
 				0C58CF8429C11C4300AC783B /* LocationViewController.swift */,
@@ -217,7 +216,7 @@
 				0C58CF8229C0BB3900AC783B /* ThirdViewController.swift */,
 				0C5CD89429BCA274001383E3 /* MyPageViewController.swift */,
 			);
-			path = " Controllers";
+			path = Screens;
 			sourceTree = "<group>";
 		};
 		0CFA525A29D377B7003CF6E8 /* Items */ = {
@@ -225,8 +224,6 @@
 			children = (
 				0CFA525629D36E8B003CF6E8 /* WeatherItemInfo.swift */,
 				0CFA525B29D377F0003CF6E8 /* WeatherItemType.swift */,
-				0CFA525D29D37D1F003CF6E8 /* Cell */,
-				0CFA525229CF8540003CF6E8 /* View */,
 			);
 			path = Items;
 			sourceTree = "<group>";
@@ -237,6 +234,17 @@
 				0CFA525829D37003003CF6E8 /* WeatherCardCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		0CFA526429D73A0F003CF6E8 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0CFA525329D0B38C003CF6E8 /* Screens */,
+				0CFA525D29D37D1F003CF6E8 /* Cell */,
+				0CFA525229CF8540003CF6E8 /* CommonView */,
+				0CFA525A29D377B7003CF6E8 /* Items */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		16FCB0805C8BCA5677D117F8 /* Frameworks */ = {
