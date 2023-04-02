@@ -8,11 +8,11 @@
 import UIKit
 
 struct WeatherItemInfo {
-    let weatherImage: UIImage
-    let backgraundImage: UIImage
-    let currentWeather: String
-    let cityName: String
-    let weatherTitle: String
-    let minTemp: String
-    let maxTemp: String
+    var weatherImage: UIImage
+    var backgraundImage: UIImage
+    var currentWeather: String
+    var cityName: String
+    var weatherTitle: String
+    var minTemp: String
+    var maxTemp: String
 }

@@ -54,6 +54,37 @@ class WeatherCardCell: UITableViewCell {
         return label
     }()
     
+    private let winddirectionBox: BoxView = {
+        let view = BoxView()
+        view.boxNamelabel
+        return view
+    }()
+    
+    private let feelsLikeBox: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    private let humidityBox: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    private let pressureBox: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    private let seaLevelBox: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
+    private let grndLevelBox: BoxView = {
+        let view = BoxView()
+        return view
+    }()
+    
     
     var backgroundImageView = UIImageView()
 
@@ -106,6 +137,12 @@ private extension WeatherCardCell{
         contentView.addSubview(weatherLabel)
         contentView.addSubview(decodingTheWeatherLabel)
         contentView.addSubview(cityLabel)
+        contentView.addSubview(winddirectionBox)
+        
+        contentView.snp.makeConstraints { make in 
+            make.width.equalToSuperview()
+            make.height.equalTo(1000)
+        }
 
         cityLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(100)
@@ -139,48 +176,15 @@ private extension WeatherCardCell{
             make.top.equalTo(weatherLabel.snp.bottom).offset(10)
         }
         
-        func getWeather(){
-            let urlString = "https://api.open-meteo.com/v1/forecast?latitude=55.75&longitude=37.62&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
-            let url = URL(string: urlString)!
-            let request = URLRequest(url: url)
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                if let data, let weather = try? JSONDecoder().decode(WeatherData.self, from: data) {
-                    DispatchQueue.main.async {
-                        self.weatherLabel.text = "\(weather.currentWeather.temperature)°"
-                        
-                        self.maxTemperatureLabel.text = "\(weather.daily.temperature2MMax)"
-                        let tempHigh = String(self.maxTemperatureLabel.text!.dropFirst().dropLast())
-                        self.maxTemperatureLabel.text = "Макс:\(tempHigh)"
-                        
-                        self.minTemperatureLabel.text = "\(weather.daily.temperature2MMin)"
-                        let tempLow = String(self.minTemperatureLabel.text!.dropFirst().dropLast())
-                        self.minTemperatureLabel.text = "Мин:\(tempLow)"
-
-                        
-                        let icon = IconWithString(date: weather.currentWeather.weathercode)
-                        let image = icon.getImageForWeatherCode(weather.currentWeather.weathercode)
-                        self.weatherImageView.image = UIImage(named: image)
-                        
-                        let decodWeatherCode = DecodingTheWeatherString(date: weather.currentWeather.weathercode)
-                        let textDecode = decodWeatherCode.getTextFromWeatherCode(weather.currentWeather.weathercode)
-                        self.decodingTheWeatherLabel.text = textDecode
-                        
-                        let imageWeatherCode = DataBackgraundImage(date: weather.currentWeather.weathercode)
-                        let imageBackgraundString = imageWeatherCode.getBGImageFromWeatherCode(weather.currentWeather.weathercode)
-                        let imageBackgraund = UIImage(named: imageBackgraundString)
-                        self.backgroundImageView = UIImageView(image: imageBackgraund)
-                        self.contentView.addSubview(self.backgroundImageView)
-                        self.contentView.sendSubviewToBack(self.backgroundImageView)
-                        self.backgroundImageView.snp.makeConstraints { make in
-                            make.width.height.equalToSuperview()
-                        }
-                    }
-                } else {
-                    print("Fail!")
-                }
-            }
-            task.resume()
+        winddirectionBox.snp.makeConstraints { make in
+            make.top.equalToSuperview()
         }
         
+        
+        self.contentView.addSubview(self.backgroundImageView)
+        self.contentView.sendSubviewToBack(self.backgroundImageView)
+        self.backgroundImageView.snp.makeConstraints { make in
+            make.top.left.right.bottom.equalToSuperview()
+        }
     }
 }
