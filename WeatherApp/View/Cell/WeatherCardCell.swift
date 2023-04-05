@@ -54,37 +54,6 @@ class WeatherCardCell: UITableViewCell {
         return label
     }()
     
-    private let winddirectionBox: BoxView = {
-        let view = BoxView()
-        view.boxNamelabel
-        return view
-    }()
-    
-    private let feelsLikeBox: BoxView = {
-        let view = BoxView()
-        return view
-    }()
-    
-    private let humidityBox: BoxView = {
-        let view = BoxView()
-        return view
-    }()
-    
-    private let pressureBox: BoxView = {
-        let view = BoxView()
-        return view
-    }()
-    
-    private let seaLevelBox: BoxView = {
-        let view = BoxView()
-        return view
-    }()
-    
-    private let grndLevelBox: BoxView = {
-        let view = BoxView()
-        return view
-    }()
-    
     
     var backgroundImageView = UIImageView()
 
@@ -137,7 +106,6 @@ private extension WeatherCardCell{
         contentView.addSubview(weatherLabel)
         contentView.addSubview(decodingTheWeatherLabel)
         contentView.addSubview(cityLabel)
-        contentView.addSubview(winddirectionBox)
         
         contentView.snp.makeConstraints { make in 
             make.width.equalToSuperview()
@@ -176,9 +144,6 @@ private extension WeatherCardCell{
             make.top.equalTo(weatherLabel.snp.bottom).offset(10)
         }
         
-        winddirectionBox.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-        }
         
         
         self.contentView.addSubview(self.backgroundImageView)

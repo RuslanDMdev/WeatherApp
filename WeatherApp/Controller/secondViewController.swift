@@ -25,7 +25,7 @@ class secondViewController: UIViewController{
 
     }
     
-    // MARK: - Feed properties
+    // MARK: - Properties
 
     private let tableView = UITableView()
     private var items: [WeatherItemType] = [
@@ -75,13 +75,6 @@ private extension secondViewController {
                     let imageBackgraundString = imageWeatherCode.getBGImageFromWeatherCode(weather.currentWeather.weathercode)
                     let imageBackgraund = UIImage(named: imageBackgraundString)
                     self.backgroundImageView = UIImageView(image: imageBackgraund)
-                    
-                    print("Задний фон - \(imageBackgraund)")
-//                    self.view.addSubview(self.backgroundImageView)
-//                    self.view.sendSubviewToBack(self.backgroundImageView)
-//                    self.backgroundImageView.snp.makeConstraints { make in
-//                        make.width.height.equalToSuperview()
-//                    }
 
                     self.updateWeatherInfo(weatherImage: UIImage(named: image), backgraundImage: self.backgroundImageView.image, currentWeather: self.currentWeather, cityName: self.weatherTitle, weatherTitle: self.weatherTitle, minTemp: self.minTemperature, maxTemp: self.maxTemperature)
                     
@@ -131,6 +124,9 @@ extension secondViewController: UITableViewDataSource{
             cell.configure(with: cardWeather)
             return cell
             
+        case .cardBox(let box):
+            let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: BoxViewCell.self), for: indexPath) as! BoxViewCell; cell.configure(with: box)
+            return cell
         }
     }
 }

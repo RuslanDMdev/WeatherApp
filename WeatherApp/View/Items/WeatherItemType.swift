@@ -7,4 +7,6 @@
 
 enum WeatherItemType {
     case cardWeather(WeatherItemInfo)
+    case cardBox(CardBoxItemInfo)
+
 }

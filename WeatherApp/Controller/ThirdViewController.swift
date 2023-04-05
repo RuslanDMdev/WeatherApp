@@ -57,19 +57,15 @@ class ThirdViewController: UIViewController {
         return label
     }()
     
-    private let windspeedLabel: UILabel = {
-        let label = UILabel()
-        label.text = "-"
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
-        return label
-    }()
+
     
-    private let timezoneAbbreviationLabel: UILabel = {
-        let label = UILabel()
-        label.text = "-"
-        label.font = .systemFont(ofSize: 15, weight: .medium)
-        return label
-    }()
+    private let boxHumidity = BoxView()
+    
+    private let boxPressure = BoxView()
+
+    private let boxFeels_like = BoxView()
+    
+    private let boxWind = BoxView()
     
     private let searchTextField: UITextField = {
        let textField = UITextField()
@@ -129,11 +125,8 @@ class ThirdViewController: UIViewController {
                            let latitude = firstResult["lat"] as? Double,
                            let longitude = firstResult["lon"] as? Double {
                             self.secondApiUrl = "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=temperature_2m_max,temperature_2m_min&current_weather=true&forecast_days=1&timezone=Europe%2FMoscow"
-                            
-                            // Now you can use the latitude and longitude in the second API
-                            // TODO: Perform API call to second API
-                            print("Latitude: \(latitude), Longitude: \(longitude)")
-                            print("Second API URL: \(self.secondApiUrl)")
+
+                        
                             self.getWeather()
                             
                         }
@@ -149,15 +142,12 @@ class ThirdViewController: UIViewController {
     
     func getWeather(){
         
-        print(secondApiUrl)
         let url = URL(string: secondApiUrl)!
         let request = URLRequest(url: url)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let data, let weather = try? JSONDecoder().decode(WeatherData.self, from: data) {
                 DispatchQueue.main.async {
                     self.weatherLabel.text = "\(weather.currentWeather.temperature)°"
-                    self.windspeedLabel.text = "Скорость ветра = \(weather.currentWeather.windspeed) м/с"
-                    self.timezoneAbbreviationLabel.text = "\(weather.timezoneAbbreviation)"
                     
                     self.maxTemperatureLabel.text = "\(weather.daily.temperature2MMax)"
                     let tempHigh = String(self.maxTemperatureLabel.text!.dropFirst().dropLast())
@@ -202,14 +192,23 @@ class ThirdViewController: UIViewController {
 
 private extension ThirdViewController{
     func initialize(){
-        view.addSubview(searchTextField)
-        view.addSubview(weatherImageView)
-        view.addSubview(decodingTheWeatherLabel)
-        view.addSubview(weatherLabel)
-        view.addSubview(windspeedLabel)
-        view.addSubview(timezoneAbbreviationLabel)
-        view.addSubview(cityLabel)
-        view.addSubview(getWeatherButton)
+        let scrollView = UIScrollView(frame: view.bounds)
+        view.addSubview(scrollView)
+        scrollView.contentSize = CGSize(width: view.frame.width, height: 1200)
+
+        scrollView.addSubview(searchTextField)
+        scrollView.addSubview(weatherImageView)
+        scrollView.addSubview(decodingTheWeatherLabel)
+        scrollView.addSubview(weatherLabel)
+        scrollView.addSubview(cityLabel)
+        scrollView.addSubview(getWeatherButton)
+        let temperatureStack = UIStackView()
+        scrollView.addSubview(temperatureStack)
+        scrollView.addSubview(boxHumidity)
+        scrollView.addSubview(boxPressure)
+        scrollView.addSubview(boxFeels_like)
+        scrollView.addSubview(boxWind)
+
         view.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         
 
@@ -244,33 +243,41 @@ private extension ThirdViewController{
             make.top.equalTo(decodingTheWeatherLabel.snp.bottom).offset(10)
         }
         
-        let temperatureStack = UIStackView()
         temperatureStack.addArrangedSubview(minTemperatureLabel)
         temperatureStack.addArrangedSubview(maxTemperatureLabel)
-        view.addSubview(temperatureStack)
         temperatureStack.spacing = 5
         temperatureStack.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(weatherLabel.snp.bottom).offset(10)
         }
 
+        boxHumidity.setLabels(title: "000", value: "000", info: "000")
+        boxPressure.setLabels(title: "111", value: "111", info: "111")
         
-        
-        windspeedLabel.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.top.equalTo(temperatureStack.snp.bottom).offset(10)
+        boxHumidity.snp.makeConstraints { make in
+//            make.left.equalToSuperview().inset(20)
+            make.top.equalTo(temperatureStack.snp.bottom).offset(30)
         }
         
-        timezoneAbbreviationLabel.snp.makeConstraints { make in
-        make.centerX.equalToSuperview()
-        make.top.equalTo(windspeedLabel.snp.bottom).offset(20)
+        boxPressure.snp.makeConstraints { make in
+            make.right.equalToSuperview().inset(20)
+            make.top.equalTo(temperatureStack.snp.bottom).offset(30)
         }
         
+        boxFeels_like.snp.makeConstraints { make in
+            make.left.equalToSuperview().inset(20)
+            make.top.equalTo(boxHumidity.snp.bottom).offset(10)
+        }
+        
+        boxWind.snp.makeConstraints { make in
+            make.right.equalToSuperview().inset(20)
+            make.top.equalTo(boxPressure.snp.bottom).offset(10)
+        }
         
         getWeatherButton.backgroundColor = #colorLiteral(red: 0.1607843137, green: 0.1647058824, blue: 0.1882352941, alpha: 0.404318399)
         getWeatherButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(timezoneAbbreviationLabel.snp.bottom).offset(120)
+            make.top.equalTo(boxWind.snp.bottom).offset(120)
             make.width.equalTo(150)
             make.height.equalTo(50)
         }

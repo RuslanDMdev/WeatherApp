@@ -1,22 +1,28 @@
 //
-//  BoxView.swift
+//  BoxViewCell.swift
 //  WeatherApp
 //
 //  Created by Ruslan Dalgatov on 24.03.2023.
 //
 
-import Foundation
 import UIKit
 import SnapKit
 
-class BoxView: UIView {
-    //MARK: - init
+class BoxViewCell: UITableViewCell {
     
-    init(){
-        super.init(frame: .zero)
-        inialize()
+    func configure(with info: CardBoxItemInfo){
+        boxNameLabel.text = info.boxName
+        numLabel.text = info.boxValue
+        descriptionLabel.text = info.boxDescription
+        
     }
     
+    // MARK: - Init
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        initialize()
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -62,8 +68,8 @@ class BoxView: UIView {
     
 // MARK: - Private methods
 
-private extension BoxView{
-    func inialize(){
+private extension BoxViewCell{
+    func initialize(){
         addSubview(squareOfBox)
         squareOfBox.addSubview(boxNameLabel)
         squareOfBox.addSubview(numLabel)
